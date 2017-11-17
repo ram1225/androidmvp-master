@@ -2,13 +2,24 @@ package com.rk.mvpexample.app.main;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+import com.rk.mvpexample.app.R;
+import com.rk.mvpexample.app.service.MoviesApiCall;
+import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 public class MoviesListAdapter extends RecyclerView.Adapter<MoviesListAdapter.MoviesViewHolder> {
     private Context context;
-    private List<MovieItem> mMovieItems;
+    private List<ResultsItem> mMovieItems;
 
-    public MoviesListAdapter(Context context) {
+    public MoviesListAdapter(Context context, List<ResultsItem> mMovieItems) {
         this.context = context;
+        this.mMovieItems=mMovieItems;
     }
 
     public class MoviesViewHolder extends RecyclerView.ViewHolder {
@@ -33,9 +44,9 @@ public class MoviesListAdapter extends RecyclerView.Adapter<MoviesListAdapter.Mo
 
     @Override
     public void onBindViewHolder(MoviesViewHolder holder, int position) {
-        MovieItem mMovieItem = mMovieItems.get(position);
-        holder.mMovieTitle.setText(mMovieItem.getMovieTitle());
-        Picasso.with(this.context).load(mMovieItem.getMoviePosterPath()).into(holder.mMoviePosterPath);
+        ResultsItem mMovieItem = mMovieItems.get(position);
+        holder.mMovieTitle.setText(mMovieItem.getTitle());
+        Picasso.with(this.context).load(MoviesApiCall.mBaseUrl+"3"+mMovieItem.getPosterPath()).into(holder.mMoviePosterPath);
     }
 
     @Override

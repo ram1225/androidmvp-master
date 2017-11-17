@@ -19,19 +19,34 @@
 package com.rk.mvpexample.app.main;
 
 import android.os.Handler;
+import android.util.Log;
+
+import com.rk.mvpexample.app.service.MoviesApiCall;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class FindItemsInteractorImpl implements FindItemsInteractor {
-    @Override public void findItems(final OnFinishedListener listener) {
-        new Handler().postDelayed(new Runnable() {
-            @Override public void run() {
-                listener.onFinished(createArrayList());
-            }
-        }, 2000);
-    }
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
+public class FindItemsInteractorImpl implements FindItemsInteractor {
+
+    MoviesApiCall moviesApiCall;
+
+    @Override
+    public void findItems(final OnFinishedListener listener) {
+//        new Handler().postDelayed(new Runnable() {
+//            @Override public void run() {
+//                listener.onFinished(createArrayList());
+//            }
+//        }, 2000);
+
+        moviesApiCall = new MoviesApiCall();
+        getMovies(moviesApiCall, listener);
+    }
+/*
     private List<String> createArrayList() {
         return Arrays.asList(
                 "Item 1",
@@ -45,5 +60,30 @@ public class FindItemsInteractorImpl implements FindItemsInteractor {
                 "Item 9",
                 "Item 10"
         );
+    }*/
+
+    public void getMovies(MoviesApiCall moviesApiCall, final OnFinishedListener mListener) {
+        moviesApiCall
+                .getAPI()
+                .getMoviesList()
+                .enqueue(new Callback<com.rk.mvpexample.app.main.Response>() {
+                    @Override
+                    public void onResponse(Call<com.rk.mvpexample.app.main.Response> call, Response<com.rk.mvpexample.app.main.Response> response) {
+                       List<ResultsItem>  result = response.body().getResults();
+
+                        if (result != null)
+                            mListener.onFinished(result);
+                       // Log.v("test", result.get(0).getTitle().toString());
+                    }
+
+                    @Override
+                    public void onFailure(Call<com.rk.mvpexample.app.main.Response> call, Throwable t) {
+                        try {
+                            throw new InterruptedException("Erro na comunicação com o servidor!");
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 }

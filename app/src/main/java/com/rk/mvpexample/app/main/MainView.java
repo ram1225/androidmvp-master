@@ -26,7 +26,8 @@ public interface MainView {
 
     void hideProgress();
 
-    void setItems(List<String> items);
+    void setItems(List<ResultsItem> items);
 
     void showMessage(String message);
+
 }
